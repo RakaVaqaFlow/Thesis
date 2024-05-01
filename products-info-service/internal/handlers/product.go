@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
@@ -24,7 +25,8 @@ func (h *Handler) GetProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid type of id, should be int"})
 		return
 	}
-	product, err := h.service.GetProductByID(id)
+	ctx := context.Background()
+	product, err := h.service.GetProductByID(ctx, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 		return
@@ -38,7 +40,8 @@ func (h *Handler) AddProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	id, err := h.service.AddProduct(product)
+	ctx := context.Background()
+	id, err := h.service.AddProduct(ctx, product)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
