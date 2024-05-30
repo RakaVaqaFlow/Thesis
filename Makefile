@@ -59,3 +59,8 @@ up-storages:
 	docker compose up -d redis
 	make migration-up
 
+.PHONY up-observability:
+up-observability:
+	docker compose build
+	docker compose up -d prometheus
+	docker compose up -d grafana

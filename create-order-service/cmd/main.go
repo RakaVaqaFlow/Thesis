@@ -14,17 +14,17 @@ import (
 )
 
 var (
-	totalRequests = prometheus.NewCounterVec(
+	requestStatus = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "http_requests_total",
-			Help: "Number of get requests.",
+			Name: "http_request_status",
+			Help: "HTTP request status codes",
 		},
 		[]string{"status"},
 	)
 )
 
 func init() {
-	prometheus.MustRegister(totalRequests)
+	prometheus.MustRegister(requestStatus)
 }
 
 func sendRequests(targetURL string, rate int, numOfProducts int) {
@@ -37,11 +37,11 @@ func sendRequests(targetURL string, rate int, numOfProducts int) {
 			resp, err := client.Get(targetURL + "?id=" + strconv.Itoa(id))
 			if err != nil {
 				log.Printf("Failed to send request: %v", err)
-				totalRequests.WithLabelValues("failed").Inc()
+				requestStatus.WithLabelValues("error").Inc()
 				return
 			}
 			defer resp.Body.Close()
-			totalRequests.WithLabelValues(strconv.Itoa(resp.StatusCode)).Inc()
+			requestStatus.WithLabelValues(resp.Status).Inc()
 		}()
 	}
 }
@@ -59,5 +59,5 @@ func main() {
 	go sendRequests(targetURL, requestsPerMoreThanSecond, numOfproducts)
 
 	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":2112", nil))
 }
