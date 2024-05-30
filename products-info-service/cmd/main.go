@@ -39,6 +39,8 @@ func main() {
 	controller := controllers.NewProductController(productsRepo, quantityRepo)
 	router.GET("/products/:id", controller.GetProduct)
 	router.POST("/products", controller.AddProduct)
+	router.GET("/list", controller.GetAllProducts)
+	router.GET("/quantity/:id", controller.GetProductQuantity)
 
 	err = router.Run(":8080")
 	if err != nil {
