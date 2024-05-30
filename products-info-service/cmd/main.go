@@ -23,7 +23,7 @@ func main() {
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
-	dbOps, err := db.NewDB(ctx, dbHost, dbPort, dbName, dbUser, dbPass)
+	dbOps, err := db.NewDB(ctx, dbHost, dbPort, dbUser, dbPass, dbName)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -37,12 +37,12 @@ func main() {
 	quantityRepo := redis.NewQuantityRepo(redisCache)
 
 	controller := controllers.NewProductController(productsRepo, quantityRepo)
-	router.GET("/products/:id", controller.GetProduct)
+	router.GET("/products", controller.GetProduct)
 	router.POST("/products", controller.AddProduct)
 	router.GET("/list", controller.GetAllProducts)
-	router.GET("/quantity/:id", controller.GetProductQuantity)
+	router.GET("/quantity", controller.GetProductQuantity)
 
-	err = router.Run(":8080")
+	err = router.Run(":8090")
 	if err != nil {
 		return
 	}

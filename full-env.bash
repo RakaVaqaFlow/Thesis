@@ -1,0 +1,12 @@
+# export DB_HOST=postgres
+export DB_HOST=127.0.0.1
+export DB_PORT=5432
+export DB_USER=test
+export DB_PASSWORD=password
+export DB_NAME=test
+# export REDIS_HOST=redis
+export REDIS_HOST=127.0.0.1:6379
+export REDIS_PASSWORD=password
+export APS_TARGET_URL=http://127.0.0.1:8090/products
+export NUM_OF_PRODUCTS=200
+export TARGET_URL=http://127.0.0.1:8090/quantity

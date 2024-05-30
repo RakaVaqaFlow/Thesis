@@ -18,7 +18,11 @@ func NewQuantityRepo(redis *cache.Redis) *QuantityRepo {
 }
 
 func (q *QuantityRepo) AddOrUpdateQuantity(ctx context.Context, quantity *models.Quantity) (bool, error) {
-	err := q.redis.Client.Set(ctx, strconv.Itoa(quantity.ID), quantity, 0).Err()
+	data, err := json.Marshal(quantity)
+	if err != nil {
+		return false, err
+	}
+	err = q.redis.Client.Set(ctx, strconv.Itoa(quantity.ID), data, 0).Err()
 	if err != nil {
 		return false, err
 	}

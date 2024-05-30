@@ -1,0 +1,17 @@
+FROM golang:latest
+
+ENV SERVICE_PATH=create-order-service
+
+WORKDIR /app
+
+COPY ./${SERVICE_PATH}/go.mod ./${SERVICE_PATH}/go.sum /app/
+
+RUN go mod download
+
+COPY ${SERVICE_PATH} /app
+
+RUN go build -o create-order-service ./cmd/main.go
+
+EXPOSE 8080
+
+CMD ["./create-order-service"]

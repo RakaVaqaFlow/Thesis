@@ -1,0 +1,17 @@
+FROM golang:latest
+
+ENV SERVICE_PATH=products-info-service
+
+WORKDIR /app
+
+COPY ./${SERVICE_PATH}/go.mod ./${SERVICE_PATH}/go.sum /app/
+
+RUN go mod download
+
+COPY ${SERVICE_PATH} /app
+
+RUN go build -o products-info-service ./cmd/main.go
+
+EXPOSE 8090
+
+CMD ["./products-info-service"]

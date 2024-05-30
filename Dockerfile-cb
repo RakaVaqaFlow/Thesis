@@ -1,0 +1,21 @@
+FROM haskell:8.10 as builder
+
+WORKDIR /app
+
+COPY circuit-breaker/stack.yaml circuit-breaker/package.yaml /app/
+
+RUN stack setup
+
+COPY /circuit-breaker /app
+
+RUN stack build --system-ghc --copy-bins
+
+FROM ubuntu:20.04
+
+RUN apt-get update && apt-get install -y \
+    libgmp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /root/.local/bin /usr/local/bin
+
+CMD ["circuit-breaker"]

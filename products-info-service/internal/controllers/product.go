@@ -41,7 +41,7 @@ type QuantityRepo interface {
 */
 
 func (h *ProductController) GetProduct(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid type of id, should be int"})
 		return
@@ -73,7 +73,7 @@ func (h *ProductController) AddProduct(c *gin.Context) {
 	}
 	_, err = h.quantityRepo.AddOrUpdateQuantity(c, &quant)
 	if err != nil {
-		log.Warningf(c, "error", "error while adding to cache")
+		log.Print("error while adding to redis: ", err.Error())
 	}
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
@@ -89,7 +89,7 @@ func (h *ProductController) GetAllProducts(c *gin.Context) {
 }
 
 func (h *ProductController) GetProductQuantity(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid type of id, should be int"})
 		return
