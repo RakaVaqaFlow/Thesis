@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9d79b3cf-f2b2-431d-8297-db87321c4b6e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/handlers/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/product.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/product.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +43,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vakhalilov/thesis/Thesis/products-info-service&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vakhalilov/thesis/Thesis-experiment/delivery-service&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;
   }
