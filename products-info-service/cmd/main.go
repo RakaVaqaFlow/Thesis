@@ -3,16 +3,13 @@ package main
 import (
 	"context"
 	"log"
-	"strconv"
+	"os"
 
-	"products-info-service/internal/handlers"
+	"products-info-service/internal/controllers"
 	"products-info-service/internal/pkg/cache"
 	"products-info-service/internal/pkg/db"
 	"products-info-service/internal/repository/postgresql"
 	"products-info-service/internal/repository/redis"
-	"products-info-service/internal/services"
-
-	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,29 +17,28 @@ import (
 func main() {
 	router := gin.Default()
 	ctx := context.Background()
-	viper.SetConfigFile("config.yaml")
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	dbOps, err := db.NewDB(ctx, dbHost, dbPort, dbName, dbUser, dbPass)
+	if err != nil {
+		log.Fatal(err.Error())
+		return
 	}
 
-	dbUser := viper.GetString("database.user")
-	dbPassword := viper.GetString("database.password")
-	dbHost := viper.GetString("database.host")
-	dbPort, _ := strconv.Atoi(viper.GetString("database.port"))
-	dbName := viper.GetString("database.name")
-	dbOps, err := db.NewDB(ctx, dbHost, dbPort, dbName, dbUser, dbPassword)
-	if err != nil {
-		log.Fatal("oh(")
-	}
-	productsRepo := postgresql.NewProductsRepo(dbOps)
-	redisHost := viper.GetString("redis.host")
-	redisPassword := viper.GetString("redis.password")
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
 	redisCache := cache.NewRedis(redisHost, redisPassword)
+
+	productsRepo := postgresql.NewProductsRepo(dbOps)
 	quantityRepo := redis.NewQuantityRepo(redisCache)
-	service := services.NewProductInfoService(productsRepo, quantityRepo)
-	handler := handlers.NewHandler(service)
-	router.GET("/products/:id", handler.GetProduct)
-	router.POST("/products", handler.AddProduct)
+
+	controller := controllers.NewProductController(productsRepo, quantityRepo)
+	router.GET("/products/:id", controller.GetProduct)
+	router.POST("/products", controller.AddProduct)
 
 	err = router.Run(":8080")
 	if err != nil {
