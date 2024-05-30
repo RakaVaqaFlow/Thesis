@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -84,6 +85,7 @@ func (h *ProductController) GetAllProducts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println(allProducts)
 	c.JSON(http.StatusOK, allProducts)
 
 }

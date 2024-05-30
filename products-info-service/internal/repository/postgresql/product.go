@@ -52,7 +52,7 @@ func (r *ProductsRepo) GetById(ctx context.Context, id int) (*models.Product, er
 // List of all product light
 func (r *ProductsRepo) List(ctx context.Context) ([]*models.ProductLightweight, error) {
 	products := make([]*models.ProductLightweight, 0)
-	err := r.db.Get(ctx, &products, `SELECT id,name FROM products`)
+	err := r.db.Select(ctx, &products, `SELECT id,name FROM products`)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository.ErrObjectNotFound
 	}
