@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"context"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -9,7 +9,6 @@ import (
 	"products-info-service/internal/repository"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/appengine/log"
 )
 
 type ProductController struct {
@@ -47,8 +46,7 @@ func (h *ProductController) GetProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid type of id, should be int"})
 		return
 	}
-	ctx := context.Background()
-	product, err := h.productsRepo.GetById(ctx, id)
+	product, err := h.productsRepo.GetById(c, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 		return
@@ -62,8 +60,7 @@ func (h *ProductController) AddProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx := context.Background()
-	id, err := h.productsRepo.Add(ctx, &product)
+	id, err := h.productsRepo.Add(c, &product)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -74,19 +71,33 @@ func (h *ProductController) AddProduct(c *gin.Context) {
 		Count: product.Quantity,
 		Price: product.Price,
 	}
-	_, err = h.quantityRepo.AddOrUpdateQuantity(ctx, &quant)
+	_, err = h.quantityRepo.AddOrUpdateQuantity(c, &quant)
 	if err != nil {
-		log.Warningf(ctx, "error", "error while adding to cache")
+		log.Warningf(c, "error", "error while adding to cache")
 	}
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func (h *ProductController) GetAllProducts(c *gin.Context) {
-	// need implement
-	c.JSON(http.StatusOK, _)
+	allProducts, err := h.productsRepo.List(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, allProducts)
+
 }
 
 func (h *ProductController) GetProductQuantity(c *gin.Context) {
-	// need implement
-	c.JSON(http.StatusOK, _)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid type of id, should be int"})
+		return
+	}
+	quantity, err := h.quantityRepo.GetProductQuantity(c, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, quantity)
 }
